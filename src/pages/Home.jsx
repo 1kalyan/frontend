@@ -2,13 +2,23 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import beforeImg from "../assets/test_3.jpg";
 import afterImg from "../assets/test_3_colorized_612x291.png";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Home() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [hoverUpload, setHoverUpload] = useState(false);
 
-  // Put arrays/variables OUTSIDE of JSX
   const gallery = [afterImg, afterImg, afterImg, afterImg, afterImg, afterImg];
+
+  const handleTryNow = () => {
+    if (user) {
+      navigate("/colorize");
+    } else {
+      // remember where they intended to go
+      navigate("/login", { state: { from: "/colorize" } });
+    }
+  };
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-10">
@@ -23,7 +33,7 @@ export default function Home() {
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <button
-              onClick={() => navigate("/colorize")}
+              onClick={handleTryNow}
               className="px-4 py-2 rounded-md bg-black text-white"
             >
               Try it now
@@ -66,7 +76,7 @@ export default function Home() {
             <button
               onMouseEnter={() => setHoverUpload(true)}
               onMouseLeave={() => setHoverUpload(false)}
-              onClick={() => navigate("/colorize")}
+              onClick={handleTryNow}
               className={`px-3 py-1.5 rounded-md text-sm ${
                 hoverUpload ? "bg-black text-white" : "border"
               }`}
@@ -84,7 +94,6 @@ export default function Home() {
           {[
             { title: "Photorealistic colors", desc: "Trained on diverse datasets to keep skin tones and skies natural." },
             { title: "Fast & private", desc: "Your images never leave your server unless you export them." },
-            { title: "Batch mode", desc: "Queue multiple images and download results together." },
             { title: "Free tier", desc: "Start colorizing right away – upgrade only if you need more." },
           ].map((f) => (
             <div key={f.title} className="rounded-xl border bg-white p-4 shadow-sm">
@@ -98,7 +107,7 @@ export default function Home() {
       {/* How it works */}
       <section className="py-12">
         <h2 className="text-2xl font-semibold">How it works</h2>
-        <ol className="mt-6 grid gap-4 sm:grid-cols-3">
+        <ol className="mt-6 grid gap-5 sm:grid-cols-3">
           {[
             { step: 1, title: "Upload", desc: "Choose a black-and-white photo (JPG/PNG)." },
             { step: 2, title: "Colorize", desc: "Our model predicts realistic colors." },
@@ -116,9 +125,9 @@ export default function Home() {
           ))}
         </ol>
         <div className="mt-6">
-          <Link to="/colorize" className="px-4 py-2 rounded-md bg-black text-white">
+          <button onClick={handleTryNow} className="px-4 py-2 rounded-md bg-black text-white">
             Start colorizing
-          </Link>
+          </button>
         </div>
       </section>
 

@@ -12,7 +12,6 @@ import Signup from "./pages/Signup.jsx";
 export default function App() {
   return (
     <Layout>
-      {/* keep your Tailwind test content if you like */}
       <div className="p-6">
       
         <Routes>

@@ -1,11 +1,16 @@
 // src/pages/Login.jsx
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Login() {
-  const { login } = useAuth(); // signature: login(email, password)
+  const { login } = useAuth();
   const nav = useNavigate();
+  const loc = useLocation();
+  const from =
+    (typeof loc.state?.from === "string" && loc.state.from) ||
+    (typeof loc.state?.from?.pathname === "string" && loc.state.from.pathname) ||
+    "/profile"; // fallback
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,14 +22,13 @@ export default function Login() {
     e.preventDefault();
     setErr("");
 
-    // basic client validation
     if (!email.includes("@")) return setErr("Please enter a valid email.");
     if (!password) return setErr("Please enter your password.");
 
     try {
       setLoading(true);
-      await login(email, password); // <- your context expects (email, password)
-      nav("/profile", { replace: true });
+      await login(email, password);
+      nav(from, { replace: true }); // ✅ go back to intended page (e.g., /colorize)
     } catch (e) {
       const msg =
         e?.response?.data?.detail ||
@@ -43,9 +47,7 @@ export default function Login() {
 
       <form onSubmit={onSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-left mb-1">
-            Email
-          </label>
+          <label className="block text-sm font-medium text-left mb-1">Email</label>
           <input
             className="w-full rounded-md border px-3 py-2"
             type="email"
@@ -57,9 +59,7 @@ export default function Login() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-left mb-1">
-            Password
-          </label>
+          <label className="block text-sm font-medium text-left mb-1">Password</label>
           <div className="relative">
             <input
               className="w-full rounded-md border px-3 py-2 pr-10"
@@ -106,11 +106,15 @@ export default function Login() {
         </span>
       </div>
 
-      {/* Optional: demo login button */}
+      {/* Optional: demo login */}
       <div className="mt-6">
         <button
           type="button"
-          onClick={() => login("demo@example.com", "demopass").then(() => nav("/profile", { replace: true })).catch(() => setErr("Demo user not available."))}
+          onClick={() =>
+            login("demo@example.com", "demopass")
+              .then(() => nav(from, { replace: true }))
+              .catch(() => setErr("Demo user not available."))
+          }
           className="w-full rounded-md border py-2"
         >
           Try a demo account

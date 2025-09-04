@@ -36,7 +36,7 @@ export default function Signup() {
         // OR: first_name: firstName, last_name: lastName
       });
 
-      nav("/profile", { replace: true });
+      nav("/", { replace: true });
     } catch (e) {
       const msg =
         e?.response?.data?.detail ||
