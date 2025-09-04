@@ -10,7 +10,7 @@ export default function Login() {
   const from =
     (typeof loc.state?.from === "string" && loc.state.from) ||
     (typeof loc.state?.from?.pathname === "string" && loc.state.from.pathname) ||
-    "/profile"; // fallback
+    "/colorize";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +28,7 @@ export default function Login() {
     try {
       setLoading(true);
       await login(email, password);
-      nav(from, { replace: true }); // ✅ go back to intended page (e.g., /colorize)
+      nav("/", { replace: true });
     } catch (e) {
       const msg =
         e?.response?.data?.detail ||
